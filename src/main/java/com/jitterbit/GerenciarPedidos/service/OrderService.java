@@ -6,13 +6,14 @@ import com.jitterbit.GerenciarPedidos.entities.Items;
 import com.jitterbit.GerenciarPedidos.entities.Order;
 import com.jitterbit.GerenciarPedidos.repositories.ItemsRepository;
 import com.jitterbit.GerenciarPedidos.repositories.OrderRepository;
+import com.jitterbit.GerenciarPedidos.service.exceptions.DatabaseException;
+import com.jitterbit.GerenciarPedidos.service.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -32,7 +33,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public PedidoDto findById(String id){
-        Order result = repository.findById(id).orElseThrow(()-> new EntityNotFoundException("Id not found"));
+        Order result = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Id not found"));
         return new PedidoDto(result);
     }
 
@@ -50,7 +51,7 @@ public class OrderService {
     @Transactional
     public PedidoDto update(String id, PedidoDto dto){
         try {
-            Order entity = repository.findById(id).orElseThrow(()-> new EntityNotFoundException("Id not found"));
+            Order entity = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Id not found"));
             CopyDtoToEntity(dto,entity);
             for (Items i: entity.getItems()){
                 i.setOrder(entity);
@@ -59,19 +60,19 @@ public class OrderService {
             entity = repository.save(entity);
             return new PedidoDto(entity);
         }catch (EntityNotFoundException e){
-            throw new EntityNotFoundException("Id not found");
+            throw new ResourceNotFoundException("Id not found");
         }
     }
 
     @Transactional
     public void delete(String id){
         if (!repository.existsById(id)){
-            throw new EntityNotFoundException("Id not found");
+            throw new ResourceNotFoundException("Id not found");
         }
         try {
             repository.deleteById(id);
         }catch (DataIntegrityViolationException e){
-            throw new DataIntegrityViolationException("Integrity violation.");
+            throw new DatabaseException("Integrity violation.");
         }
     }
 

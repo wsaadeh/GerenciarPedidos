@@ -23,6 +23,12 @@ public class OrderController {
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<PedidoDto> findById(@PathVariable String id){
+        PedidoDto dto = service.findById(id);
+        return ResponseEntity.ok(dto);
+    }
+
     @PostMapping
     public ResponseEntity<PedidoDto> insert(@RequestBody PedidoDto dto){
         dto = service.insert(dto);
@@ -32,6 +38,18 @@ public class OrderController {
                 .buildAndExpand(dto.getNumeroPedido())
                 .toUri();
         return ResponseEntity.created(uri).body(dto);
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<PedidoDto> update(@PathVariable String id, @RequestBody PedidoDto dto){
+        dto = service.update(id,dto);
+        return ResponseEntity.ok(dto);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id){
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

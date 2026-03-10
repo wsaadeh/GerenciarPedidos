@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -15,7 +16,7 @@ public class PedidoDto {
   private String numeroPedido;
   private double valorTotal;
   private OffsetDateTime dataCriacao;
-  private List<ItemsDto> items;
+  private List<ItemsDto> items = new ArrayList<>();
 
   public PedidoDto(Order entity){
     this.numeroPedido = entity.getOrderId();

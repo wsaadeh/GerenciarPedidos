@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -22,7 +23,12 @@ public class Order {
     private double orderValue;
     private OffsetDateTime creationDate;
 
-    @OneToMany(mappedBy = "order")
-    private List<Items> items;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<Items> items = new ArrayList<>();
+
+    public void addItem(Items item){
+        items.add(item);
+        item.setOrder(this);
+    }
 
 }
